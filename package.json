@@ -1,0 +1,13 @@
+{
+  "name": "quanlythietbi",
+  "version": "1.0.0",
+  "description": "Hệ thống quản lý mượn/trả thiết bị",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
