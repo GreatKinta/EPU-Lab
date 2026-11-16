@@ -1,0 +1,28 @@
+{
+  "name": "labchain-contracts",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "node": "hardhat node --hostname 127.0.0.1",
+    "deploy": "hardhat run scripts/deploy.ts --network localhost"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "4.2.2",
+    "@nomicfoundation/hardhat-mocha": "4.0.1",
+    "@types/mocha": "10.0.10",
+    "ethers": "6.17.0",
+    "hardhat": "3.21.2",
+    "mocha": "12.0.3",
+    "solc": "0.8.28",
+    "typescript": "7.0.2"
+  },
+  "overrides": {
+    "zod": "4.6.7",
+    "glob": "14.0.6",
+    "minimatch": "11.0.8",
+    "tmp": "0.2.7"
+  }
+}

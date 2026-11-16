@@ -1,0 +1,125 @@
+name: labchain
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?Run docker compose -f docker-compose.setup.yml run --rm setup}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  hardhat-node:
+    platform: linux/amd64
+    image: labchain-chain:dev
+    build: ./blockchain
+    ports:
+      - "127.0.0.1:8545:8545"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8545',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_chainId',params:[]})}).then(r=>r.json()).then(x=>process.exit(x.result==='0x7a69'?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  migrate:
+    platform: linux/amd64
+    image: labchain-backend:dev
+    build:
+      context: ./backend
+      target: base
+    env_file: .env
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      postgres: {condition: service_healthy}
+  seed:
+    platform: linux/amd64
+    image: labchain-backend:dev
+    env_file: .env
+    command: ["python", "-m", "app.scripts.seed_demo", "--if-development"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+  ocr-init:
+    platform: linux/amd64
+    image: labchain-backend-ocr:dev
+    build:
+      context: ./backend
+      target: ocr
+    env_file: .env
+    environment:
+      EASYOCR_MODULE_PATH: /data/ocr
+    command: ["python", "-m", "app.scripts.prepare_ocr"]
+    volumes:
+      - ocr_models:/data/ocr
+  backend:
+    platform: linux/amd64
+    image: labchain-backend-ocr:dev
+    build:
+      context: ./backend
+      target: ocr
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      OCR_ENABLED: "true"
+      EASYOCR_MODULE_PATH: /data/ocr
+    volumes:
+      - uploads:/data/uploads
+      - chain_config:/chain:ro
+      - ocr_models:/data/ocr
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      seed: {condition: service_completed_successfully}
+      ocr-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+  chain-deploy:
+    platform: linux/amd64
+    image: labchain-chain:dev
+    environment:
+      RPC_URL: http://hardhat-node:8545
+      CHAIN_CONFIG_PATH: /chain/local.json
+    volumes:
+      - chain_config:/chain
+    command: ["sh", "-c", "npm run deploy && chown 1000:1000 /chain/local.json"]
+    depends_on:
+      hardhat-node: {condition: service_healthy}
+  worker:
+    platform: linux/amd64
+    image: labchain-backend:dev
+    env_file: .env
+    command: ["python", "-m", "app.workers.outbox"]
+    volumes:
+      - chain_config:/chain:ro
+    depends_on:
+      backend: {condition: service_healthy}
+      chain-deploy: {condition: service_completed_successfully}
+    restart: unless-stopped
+  frontend:
+    platform: linux/amd64
+    image: labchain-frontend:latest
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${WEB_BIND_ADDRESS:-127.0.0.1}:${WEB_PORT:-5173}:80"
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1/api/v1/ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+volumes:
+  postgres_data:
+  uploads:
+  chain_config:
+  ocr_models:

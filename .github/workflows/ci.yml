@@ -1,0 +1,45 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_USER: labchain
+          POSTGRES_DB: labchain_test
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U labchain -d labchain_test" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      JWT_SECRET: ci-only-secret-at-least-thirty-two-characters
+      DATABASE_URL: postgresql+psycopg://labchain:ci-only-password@localhost:5432/labchain_test
+      RUN_CHAIN_TESTS: '1'
+      CHAIN_CONFIG_PATH: ${{ github.workspace }}/runtime/local.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.12'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '24'}
+      - run: pip install -r backend/requirements.lock
+      - run: cd blockchain && npm ci && npm test
+      - run: npm --prefix blockchain run node > /tmp/labchain-node.log 2>&1 &
+      - name: Wait for local RPC
+        run: |
+          python - <<'PY'
+          import time, httpx
+          for attempt in range(30):
+              try:
+                  if httpx.post('http://localhost:8545',json={'jsonrpc':'2.0','id':1,'method':'eth_chainId','params':[]}).json().get('result')=='0x7a69':
+                      break
+              except httpx.HTTPError:
+                  pass
+              time.sleep(1)
+          else:
+              raise SystemExit('RPC unavailable')
+          PY
+      - run: cd blockchain && npm run deploy
+      - run: cd backend && ruff check . && alembic upgrade head && pytest
+      - run: cd frontend && npm ci && npm test && npm run build

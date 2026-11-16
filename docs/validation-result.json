@@ -1,0 +1,45 @@
+{
+  "host_backend": {
+    "passed": 25,
+    "includes": [
+      "PostgreSQL concurrency",
+      "real Hardhat RPC",
+      "real EasyOCR CPU"
+    ]
+  },
+  "frontend": {
+    "passed": 6,
+    "typecheck": "PASS",
+    "production_build": "PASS",
+    "node24_container_tests": "6 PASS"
+  },
+  "smart_contract": {
+    "passed": 5,
+    "compiler": "solc 0.8.28"
+  },
+  "migrations": {
+    "upgrade": "PASS",
+    "downgrade_upgrade": "PASS",
+    "schema_drift_check": "PASS"
+  },
+  "docker_base": {
+    "build": "PASS",
+    "startup": "PASS",
+    "restart_command": "PASS",
+    "http_smoke": "PASS"
+  },
+  "npm_audit": {
+    "frontend": 0,
+    "blockchain": 0
+  },
+  "not_verified": [
+    "Browser visual QA/screenshots: browser access host unavailable",
+    "Optional Docker OCR image: real OCR validated on host only"
+  ],
+  "container_backend": {
+    "python": "3.12.16",
+    "passed": 24,
+    "skipped": 1,
+    "skip_reason": "Real OCR model is host opt-in"
+  }
+}

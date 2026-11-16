@@ -1,0 +1,4 @@
+# Optional real OCR. Base backend requirements stay independent of torch.
+# Install a compatible CPU torch/torchvision pair from the official CPU index first.
+# Exact tested host inference environment is recorded in requirements-ocr.lock.
+easyocr==1.7.2

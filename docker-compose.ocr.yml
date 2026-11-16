@@ -1,0 +1,3 @@
+# Compatibility override: OCR is now included in docker-compose.yml by default.
+# Existing commands that include this file continue to work.
+services: {}

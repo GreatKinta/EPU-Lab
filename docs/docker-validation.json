@@ -1,0 +1,93 @@
+{
+  "checked_at": "2026-11-16T13:55:27.130662+00:00",
+  "platform": "Linux x86_64 / Docker Desktop desktop-linux",
+  "result": "PASS",
+  "startup": "./scripts/start.sh --dns-workaround",
+  "services": {
+    "backend": {
+      "state": "running",
+      "health": "healthy",
+      "exit_code": 0
+    },
+    "chain-deploy": {
+      "state": "exited",
+      "health": null,
+      "exit_code": 0
+    },
+    "frontend": {
+      "state": "running",
+      "health": "healthy",
+      "exit_code": 0
+    },
+    "hardhat-node": {
+      "state": "running",
+      "health": "healthy",
+      "exit_code": 0
+    },
+    "migrate": {
+      "state": "exited",
+      "health": null,
+      "exit_code": 0
+    },
+    "ocr-init": {
+      "state": "exited",
+      "health": null,
+      "exit_code": 0
+    },
+    "postgres": {
+      "state": "running",
+      "health": "healthy",
+      "exit_code": 0
+    },
+    "seed": {
+      "state": "exited",
+      "health": null,
+      "exit_code": 0
+    },
+    "worker": {
+      "state": "running",
+      "health": null,
+      "exit_code": 0
+    }
+  },
+  "checks": {
+    "compose_config_and_ocr_compatibility": "PASS",
+    "docker_env_setup_new_secrets_permissions_and_no_overwrite": "PASS",
+    "seed_skip_outside_development": "PASS",
+    "backend_in_container": {
+      "passed": 25,
+      "real_chain": true,
+      "real_ocr": true
+    },
+    "frontend_in_container": {
+      "passed": 6,
+      "typescript_and_build": "PASS"
+    },
+    "contracts_in_container": {
+      "passed": 5
+    },
+    "nginx_config": "PASS",
+    "nginx_spa_deep_link_and_asset_404": "PASS",
+    "nginx_api_readiness": "PASS",
+    "nginx_http_real_ocr": "PASS: ARDUINO / UNO detected",
+    "borrow_return_and_two_chain_attestations_via_nginx": {
+      "result": "PASS",
+      "loan_id": "b0912f59-e531-4d1e-9830-3fb3d811234c",
+      "events": 2,
+      "verified": true,
+      "stock_restored": true,
+      "frontend_proxy": true,
+      "network": "Hardhat Local · 31337"
+    },
+    "ocr_dependency_consistency_pip_check": "PASS",
+    "python_lint_and_shell_syntax": "PASS",
+    "startup_rerun_with_existing_volumes": "PASS"
+  },
+  "notes": [
+    "Default Docker deployment enables CPU OCR even if an old .env has OCR_ENABLED=false.",
+    "Application images target linux/amd64; ARM emulation has not been tested.",
+    "Windows PowerShell launcher was added but not executed on this Linux host.",
+    "Hardhat state remains in memory and is lost when its node stops or restarts.",
+    "Tests use the separate labchain_test database. HTTP smoke adds completed demo loans and restores stock."
+  ]
+}

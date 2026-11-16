@@ -1,0 +1,27 @@
+{
+  "engine": "EasyOCR (CPU)",
+  "raw_text": "ARDUINO UNO R3\nModel: UNO-R3\nSerial: LAB-2026-001",
+  "confidence": 0.9002,
+  "lines": [
+    {
+      "text": "ARDUINO UNO R3",
+      "confidence": 0.9683
+    },
+    {
+      "text": "Model: UNO-R3",
+      "confidence": 0.9502
+    },
+    {
+      "text": "Serial: LAB-2026-001",
+      "confidence": 0.7822
+    }
+  ],
+  "suggestions": {
+    "name": "ARDUINO UNO R3",
+    "code_candidate": "UNO-R3",
+    "product_type": null,
+    "description": "ARDUINO UNO R3\nModel: UNO-R3\nSerial: LAB-2026-001"
+  },
+  "requires_confirmation": true,
+  "warning": "Kiểm tra và chỉnh sửa kết quả trước khi lưu"
+}

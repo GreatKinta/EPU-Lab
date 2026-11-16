@@ -1,0 +1,35 @@
+{
+  "python": {
+    "ok": true,
+    "output": "3.14.9"
+  },
+  "node": {
+    "ok": true,
+    "output": "v26.13.1"
+  },
+  "npm": {
+    "ok": true,
+    "output": "12.2.2"
+  },
+  "git": {
+    "ok": true,
+    "output": "git version 2.56.1"
+  },
+  "docker": {
+    "ok": true,
+    "output": "Docker version 29.9.3, build 5457199aa5"
+  },
+  "compose": {
+    "ok": true,
+    "output": "Docker Compose version v5.7.0"
+  },
+  "docker_daemon": {
+    "ok": true,
+    "output": "29.9.3"
+  },
+  "disk": {
+    "ok": true,
+    "output": "347.5 GiB available"
+  },
+  "deployment_ready": true
+}

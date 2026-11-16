@@ -1,0 +1,9 @@
+name: labchain-setup
+services:
+  setup:
+    image: python:3.12-slim
+    working_dir: /workspace
+    user: "${LOCAL_UID:-1000}:${LOCAL_GID:-1000}"
+    volumes:
+      - .:/workspace
+    command: ["python", "scripts/setup_env.py"]

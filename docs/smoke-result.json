@@ -1,0 +1,9 @@
+{
+  "result": "PASS",
+  "loan_id": "b0912f59-e531-4d1e-9830-3fb3d811234c",
+  "events": 2,
+  "verified": true,
+  "stock_restored": true,
+  "frontend_proxy": true,
+  "network": "Hardhat Local \u00b7 31337"
+}
