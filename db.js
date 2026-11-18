@@ -29,15 +29,16 @@ db.exec(`
   );
 
   CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    category TEXT,
-    description TEXT,
-    image TEXT,
-    quantity_total INTEGER NOT NULL DEFAULT 0,
-    quantity_available INTEGER NOT NULL DEFAULT 0,
-    fine_per_day INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
+    ProductID INTEGER PRIMARY KEY AUTOINCREMENT,
+    ProductName TEXT NOT NULL,
+    PathImage TEXT,
+    ProductType TEXT,
+    Quantity INTEGER NOT NULL DEFAULT 0,
+    Unit TEXT,
+    Price INTEGER NOT NULL DEFAULT 0,
+    Description TEXT,
+    CreateDate TEXT NOT NULL DEFAULT (datetime('now', 'localtime')),
+    UpdateDate TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
   );
 
   CREATE TABLE IF NOT EXISTS borrow_slips (
@@ -60,7 +61,7 @@ db.exec(`
     product_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL DEFAULT 1,
     FOREIGN KEY (slip_id) REFERENCES borrow_slips(id) ON DELETE CASCADE,
-    FOREIGN KEY (product_id) REFERENCES products(id)
+    FOREIGN KEY (product_id) REFERENCES products(ProductID)
   );
 
   CREATE TABLE IF NOT EXISTS payments (
