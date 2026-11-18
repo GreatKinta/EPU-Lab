@@ -2,6 +2,9 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const db = require('./db');
+const { notFound, errorHandler } = require('./middleware/errorHandler');
+const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,16 +23,22 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, message: 'Server dang chay', time: new Date().toISOString() });
 });
 
-// Báo lỗi khi gọi đường dẫn API không tồn tại
-app.use('/api', (req, res) => {
-  res.status(404).json({ error: 'Khong tim thay API nay' });
+// Route kiểm tra CSDL
+app.get('/api/db-check', (req, res) => {
+  const tables = db
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
+    .all();
+  res.json({ tables: tables.map((t) => t.name) });
 });
 
+// Các nhóm route (thêm route mới vào đây, TRƯỚC notFound)
+app.use('/api/auth', authRoutes);
+
+// Báo lỗi khi gọi đường dẫn API không tồn tại
+app.use('/api', notFound);
+
 // Bắt lỗi chung
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Loi may chu' });
-});
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server chay tai http://localhost:${PORT}`);

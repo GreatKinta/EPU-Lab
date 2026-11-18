@@ -10,3 +10,4 @@ blockchain/artifacts/
 blockchain/cache/
 *.log
 .DS_Store
+data/shop.db*
